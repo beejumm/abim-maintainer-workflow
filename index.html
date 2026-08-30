@@ -1,0 +1,1058 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Maintainer workflow for the AnKing ABIM Anki deck: a clickable flowchart over stage-by-stage checklists.">
+<style>img{max-width:100%}[hidden]{display:none!important}</style>
+<title>ABIM Maintainer Workflow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap">
+
+<style>
+:root {
+  --ground:      #F2F4F2;
+  --surface:     #FFFFFF;
+  --surface-2:   #E9EDEA;
+  --ink:         #16211D;
+  --ink-2:       #4B5A54;
+  --ink-3:       #74847D;
+  --rule:        #D5DCD7;
+  --rule-strong: #B6C1BA;
+  --accent:      #0D6355;
+  --accent-soft: #DCEBE6;
+  --accent-ink:  #0A4A40;
+  --amber:       #9A5B12;
+  --amber-soft:  #F7EAD6;
+  --amber-rule:  #DDBE8A;
+  --danger:      #9C2B22;
+  --danger-soft: #F8E4E1;
+  --danger-rule: #E0AEA8;
+  --wire:        #9FADA6;
+
+  --f-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --f-body:    "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --f-mono:    "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --shadow: 0 1px 2px rgba(22,33,29,.06), 0 4px 14px rgba(22,33,29,.05);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:      #101614;
+    --surface:     #18211E;
+    --surface-2:   #212B27;
+    --ink:         #E4EBE7;
+    --ink-2:       #A5B3AD;
+    --ink-3:       #7D8C86;
+    --rule:        #2C3833;
+    --rule-strong: #3E4C46;
+    --accent:      #52BFA7;
+    --accent-soft: #16302B;
+    --accent-ink:  #7FD4C0;
+    --amber:       #DFA75E;
+    --amber-soft:  #2E2416;
+    --amber-rule:  #5B4526;
+    --danger:      #E68A80;
+    --danger-soft: #331A18;
+    --danger-rule: #5E2F2A;
+    --wire:        #566661;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 14px rgba(0,0,0,.25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --ground:      #101614;
+  --surface:     #18211E;
+  --surface-2:   #212B27;
+  --ink:         #E4EBE7;
+  --ink-2:       #A5B3AD;
+  --ink-3:       #7D8C86;
+  --rule:        #2C3833;
+  --rule-strong: #3E4C46;
+  --accent:      #52BFA7;
+  --accent-soft: #16302B;
+  --accent-ink:  #7FD4C0;
+  --amber:       #DFA75E;
+  --amber-soft:  #2E2416;
+  --amber-rule:  #5B4526;
+  --danger:      #E68A80;
+  --danger-soft: #331A18;
+  --danger-rule: #5E2F2A;
+  --wire:        #566661;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 14px rgba(0,0,0,.25);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap { max-width: 60rem; margin: 0 auto; padding: 0 1.5rem 6rem; }
+
+a { color: var(--accent-ink); }
+a:focus-visible, button:focus-visible, input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+code, .mono { font-family: var(--f-mono); font-size: .86em; }
+code {
+  background: var(--surface-2);
+  padding: .1em .35em;
+  border-radius: 3px;
+  word-break: break-word;
+}
+
+/* ---------- masthead ---------- */
+.masthead { padding: 4rem 0 2.5rem; border-bottom: 1px solid var(--rule); }
+.eyebrow {
+  font-family: var(--f-mono);
+  font-size: .74rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 1rem;
+}
+h1 {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(2.4rem, 6vw, 3.6rem);
+  line-height: 1.02;
+  letter-spacing: -.02em;
+  margin: 0 0 1rem;
+  text-wrap: balance;
+}
+.lede {
+  font-size: 1.12rem;
+  color: var(--ink-2);
+  max-width: 34em;
+  margin: 0 0 2rem;
+}
+.invariants { display: flex; flex-wrap: wrap; gap: .6rem; }
+.invariant {
+  display: flex; align-items: baseline; gap: .5rem;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: .4rem .95rem;
+  font-size: .88rem;
+  color: var(--ink-2);
+  box-shadow: var(--shadow);
+}
+.invariant b { color: var(--ink); font-weight: 600; }
+
+/* ---------- section headings ---------- */
+.sec-head { margin: 4rem 0 1.5rem; }
+.sec-head .kicker {
+  font-family: var(--f-mono);
+  font-size: .72rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  display: block;
+  margin-bottom: .4rem;
+}
+.sec-head h2 {
+  font-family: var(--f-display);
+  font-size: 1.9rem;
+  font-weight: 600;
+  letter-spacing: -.015em;
+  margin: 0;
+  text-wrap: balance;
+}
+.sec-head p { color: var(--ink-2); margin: .6rem 0 0; max-width: 40em; }
+
+/* ---------- flowchart ---------- */
+.flow-frame {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 2rem 1.25rem 2.25rem;
+  box-shadow: var(--shadow);
+  overflow-x: auto;
+}
+.flow {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2.9rem 2.25rem;
+  min-width: 30rem;
+  max-width: 44rem;
+  margin: 0 auto;
+}
+.wires { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: visible; }
+
+.node {
+  position: relative;
+  z-index: 1;
+  grid-column: span 2;
+  justify-self: center;
+  width: 100%;
+  max-width: 27rem;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  border-radius: 8px;
+  padding: .85rem 1rem;
+  text-align: center;
+  transition: transform .13s ease, box-shadow .13s ease, border-color .13s ease;
+}
+a.node:hover, a.node:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(13, 99, 85, .16);
+  border-color: var(--accent);
+}
+.node .n-label {
+  font-family: var(--f-mono);
+  font-size: .68rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  display: block;
+  margin-bottom: .2rem;
+}
+.node .n-title { font-weight: 600; font-size: 1rem; display: block; }
+.node .n-sub { display: block; font-size: .85rem; color: var(--ink-2); margin-top: .25rem; }
+a.node .n-title { color: var(--accent-ink); }
+
+.node.branch { grid-column: span 1; max-width: none; }
+
+.node.term {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  border-radius: 999px;
+  max-width: 24rem;
+  padding: .7rem 1.2rem;
+}
+.node.term .n-title { color: #fff; }
+.node.term .n-sub { color: rgba(255,255,255,.78); }
+:root[data-theme="dark"] .node.term,
+:root[data-theme="dark"] .node.term .n-title { color: #0B1512; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .node.term,
+  :root:not([data-theme="light"]) .node.term .n-title { color: #0B1512; }
+  :root:not([data-theme="light"]) .node.term .n-sub { color: rgba(11,21,18,.72); }
+}
+
+.node.decision {
+  background: var(--amber-soft);
+  border-color: var(--amber-rule);
+  max-width: 22rem;
+}
+.node.decision .n-title { color: var(--amber); }
+.node.stop { background: var(--danger-soft); border-color: var(--danger-rule); }
+.node.stop .n-title { color: var(--danger); }
+.node.stop .n-sub { color: var(--ink-2); }
+
+.wire-label {
+  font-family: var(--f-mono);
+  font-size: .66rem;
+  letter-spacing: .08em;
+  fill: var(--ink-3);
+  text-anchor: middle;
+}
+
+/* ---------- stage cards ---------- */
+.stage {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 1.6rem 1.6rem 1.4rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+  scroll-margin-top: 1.5rem;
+}
+.stage > header { border-bottom: 1px solid var(--rule); padding-bottom: .9rem; margin-bottom: 1.1rem; }
+.stage h3 {
+  font-family: var(--f-display);
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: .15rem 0 0;
+  letter-spacing: -.01em;
+}
+.stage .tag {
+  font-family: var(--f-mono);
+  font-size: .7rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.stage .goal { color: var(--ink-2); margin: .5rem 0 0; font-size: .95rem; }
+.stage.alert { border-color: var(--danger-rule); }
+.stage.alert .tag { color: var(--danger); }
+
+h4.sub {
+  font-size: .8rem;
+  font-family: var(--f-mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 1.4rem 0 .5rem;
+}
+h4.sub:first-of-type { margin-top: 0; }
+
+ul.check { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .1rem; }
+ul.check li { display: flex; gap: .6rem; align-items: flex-start; padding: .3rem 0; }
+ul.check input[type="checkbox"] {
+  appearance: none;
+  flex: 0 0 auto;
+  width: 1.05rem; height: 1.05rem;
+  margin: .18rem 0 0;
+  border: 1.5px solid var(--rule-strong);
+  border-radius: 3px;
+  background: var(--surface);
+  cursor: pointer;
+  position: relative;
+  transition: background .12s ease, border-color .12s ease;
+}
+ul.check input[type="checkbox"]:checked { background: var(--accent); border-color: var(--accent); }
+ul.check input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute; left: 5px; top: 1px;
+  width: 4px; height: 9px;
+  border: solid var(--surface);
+  border-width: 0 2px 2px 0;
+  transform: rotate(42deg);
+}
+ul.check label { cursor: pointer; font-size: .95rem; }
+ul.check input:checked + label { color: var(--ink-3); text-decoration: line-through; text-decoration-color: var(--rule-strong); }
+ul.check li ul { margin: .35rem 0 0 0; }
+
+.note {
+  border-left: 3px solid var(--amber-rule);
+  background: var(--amber-soft);
+  padding: .75rem 1rem;
+  border-radius: 0 6px 6px 0;
+  margin: 1.1rem 0 0;
+  font-size: .92rem;
+}
+.note.stopnote { border-left-color: var(--danger-rule); background: var(--danger-soft); }
+.note b { color: var(--ink); }
+
+/* ---------- link chips ---------- */
+.chip {
+  display: inline-flex; align-items: center; gap: .35rem;
+  font-family: var(--f-mono); font-size: .75rem;
+  padding: .12rem .5rem;
+  border-radius: 4px;
+  border: 1px solid var(--accent);
+  color: var(--accent-ink);
+  background: var(--accent-soft);
+  text-decoration: none;
+  white-space: nowrap;
+  vertical-align: baseline;
+}
+.chip:hover { background: var(--accent); color: var(--surface); }
+:root[data-theme="dark"] .chip:hover { color: #0B1512; }
+.chip.unset {
+  border-style: dashed;
+  border-color: var(--rule-strong);
+  color: var(--ink-3);
+  background: transparent;
+  cursor: help;
+}
+.chip.unset:hover { background: transparent; color: var(--ink-3); }
+
+/* ---------- tables ---------- */
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: .93rem; }
+th, td { text-align: left; padding: .55rem .7rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th {
+  font-family: var(--f-mono); font-size: .72rem; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-3); font-weight: 500;
+}
+td.num { font-variant-numeric: tabular-nums; }
+
+.quorum { display: grid; grid-template-columns: repeat(auto-fit, minmax(4.4rem, 1fr)); gap: .5rem; margin: 1rem 0 0; }
+.quorum div {
+  background: var(--surface-2);
+  border-radius: 6px;
+  padding: .55rem .3rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.quorum .m { font-family: var(--f-mono); font-size: .7rem; color: var(--ink-3); display: block; }
+.quorum .v { font-family: var(--f-display); font-size: 1.35rem; font-weight: 600; color: var(--accent-ink); }
+
+.toolbar { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; margin-top: 1rem; }
+button.ghost {
+  font-family: var(--f-body); font-size: .84rem;
+  background: var(--surface); color: var(--ink-2);
+  border: 1px solid var(--rule-strong); border-radius: 6px;
+  padding: .35rem .8rem; cursor: pointer;
+}
+button.ghost:hover { border-color: var(--accent); color: var(--accent-ink); }
+.progress { font-size: .84rem; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+footer.page {
+  margin-top: 3.5rem; padding-top: 1.5rem;
+  border-top: 1px solid var(--rule);
+  color: var(--ink-3); font-size: .86rem;
+}
+
+@media (max-width: 640px) {
+  .flow { min-width: 26rem; }
+  .stage { padding: 1.2rem 1.1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; scroll-behavior: auto !important; }
+}
+html { scroll-behavior: smooth; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">AnKing ABIM deck</p>
+  <h1>Maintainer Workflow</h1>
+  <p class="lede">From spotting a question worth capturing to the change going live in the deck. Click any box in the flowchart to jump to its checklist.</p>
+  <div class="invariants">
+    <span class="invariant"><b>Every card</b> carries a source QID tag</span>
+    <span class="invariant"><b>Nothing merges</b> without a maintainer vote</span>
+  </div>
+</header>
+
+<section>
+  <div class="sec-head">
+    <span class="kicker">The flowchart</span>
+    <h2>How a change reaches the deck</h2>
+  </div>
+  <div class="flow-frame">
+    <div class="flow" id="flow">
+      <svg class="wires" id="wires" aria-hidden="true"></svg>
+
+      <div class="node term" data-node="start">
+        <span class="n-title">Question worth capturing</span>
+        <span class="n-sub">MKSAP / AMBOSS / UWorld</span>
+      </div>
+
+      <a class="node" href="#stage-0" data-node="s0">
+        <span class="n-label">Stage 0</span>
+        <span class="n-title">One-time setup</span>
+        <span class="n-sub">First time only</span>
+      </a>
+
+      <a class="node" href="#stage-1" data-node="s1">
+        <span class="n-label">Stage 1</span>
+        <span class="n-title">Triage</span>
+        <span class="n-sub">Search the deck four ways before anything else</span>
+      </a>
+
+      <div class="node decision" data-node="q1">
+        <span class="n-title">Is this topic already in the deck?</span>
+      </div>
+
+      <a class="node branch" href="#stage-2a" data-node="a">
+        <span class="n-label">Stage 2A</span>
+        <span class="n-title">Existing card</span>
+        <span class="n-sub">Evaluate → edit → tag → screenshot → submit</span>
+      </a>
+
+      <a class="node branch" href="#stage-2b" data-node="b">
+        <span class="n-label">Stage 2B</span>
+        <span class="n-title">New card</span>
+        <span class="n-sub">Write → tag → screenshot → submit</span>
+      </a>
+
+      <a class="node" href="#stage-3" data-node="s3">
+        <span class="n-label">Stage 3</span>
+        <span class="n-title">Discuss</span>
+        <span class="n-sub">Thread on AnkiHub Community</span>
+      </a>
+
+      <a class="node" href="#stage-4" data-node="s4">
+        <span class="n-label">Stage 4</span>
+        <span class="n-title">Vote</span>
+        <span class="n-sub">Upvotes from 50% of maintainers, rounded down</span>
+      </a>
+
+      <div class="node decision" data-node="q2">
+        <span class="n-title">Quorum reached?</span>
+      </div>
+
+      <a class="node branch stop" href="#revise" data-node="rev">
+        <span class="n-title">Revise</span>
+        <span class="n-sub">Rework and repost, or withdraw</span>
+      </a>
+
+      <a class="node branch" href="#stage-5" data-node="s5">
+        <span class="n-label">Stage 5</span>
+        <span class="n-title">Merge</span>
+        <span class="n-sub">Another maintainer accepts it</span>
+      </a>
+
+      <a class="node" href="#stage-6" data-node="s6">
+        <span class="n-label">Stage 6</span>
+        <span class="n-title">Verify and close out</span>
+      </a>
+
+      <div class="node term" data-node="done">
+        <span class="n-title">Live in the deck</span>
+      </div>
+    </div>
+  </div>
+  <div class="toolbar">
+    <button class="ghost" id="resetAll" type="button">Clear all checkboxes</button>
+    <span class="progress" id="progress"></span>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="kicker">The checklists</span>
+    <h2>Every stage, box by box</h2>
+    <p>Work top to bottom. Do not advance to the next stage with an unticked box &mdash; if you get stuck at one, that is a signal to escalate at Stage&nbsp;3. Ticks are saved in your own browser only.</p>
+  </div>
+
+  <article class="stage" id="stage-0">
+    <header>
+      <span class="tag">Stage 0</span>
+      <h3>One-time setup</h3>
+      <p class="goal">Do this once, before your first suggestion. If you cannot tick every box, you are not ready to submit.</p>
+    </header>
+    <ul class="check">
+      <li><input type="checkbox" id="c0-1"><label for="c0-1">AnkiHub account created, and you are subscribed to the AnKing ABIM deck <span data-link="ankihubDeck" data-text="AnkiHub"></span></label></li>
+      <li><input type="checkbox" id="c0-2"><label for="c0-2">Your AnkiHub account has been granted the <b>maintainer role</b> on the ABIM deck</label></li>
+      <li><input type="checkbox" id="c0-3"><label for="c0-3">AnkiHub add-on installed in Anki, logged in, and the deck has synced at least once</label></li>
+      <li><input type="checkbox" id="c0-4"><label for="c0-4">Account on AnkiHub Community, and you can post in the ABIM maintainer category <span data-link="community" data-text="Community"></span></label></li>
+      <li><input type="checkbox" id="c0-5"><label for="c0-5">You can <code>@abim-maintainers</code> in a post (the group autocompletes)</label></li>
+      <li><input type="checkbox" id="c0-6"><label for="c0-6">You have read the card creation style guide <span data-link="styleGuide" data-text="Style guide"></span></label></li>
+      <li><input type="checkbox" id="c0-7"><label for="c0-7">You have the blueprint tag list open or downloaded &mdash; you will need it on every card <span data-link="tagsFile" data-text="ABIM tags"></span></label></li>
+      <li><input type="checkbox" id="c0-8"><label for="c0-8">You have access to at least one source: MKSAP, AMBOSS or UWorld</label></li>
+      <li><input type="checkbox" id="c0-9"><label for="c0-9">Screenshot tool set up and you know how to crop tightly</label></li>
+      <li><input type="checkbox" id="c0-10"><label for="c0-10">You know the current <b>number of active maintainers</b> &mdash; that number sets the vote threshold at Stage 4</label></li>
+    </ul>
+  </article>
+
+  <article class="stage" id="stage-1">
+    <header>
+      <span class="tag">Stage 1</span>
+      <h3>Triage &mdash; is this topic already in the deck?</h3>
+      <p class="goal">Never create a duplicate. Search three different ways before concluding a card does not exist.</p>
+    </header>
+    <ul class="check">
+      <li><input type="checkbox" id="c1-1"><label for="c1-1"><b>Keyword.</b> In the Anki browser, search the deck for the core term &mdash; <code>"deck:AnKing ABIM" pneumonia</code></label></li>
+      <li><input type="checkbox" id="c1-2"><label for="c1-2"><b>Synonyms and abbreviations.</b> Repeat with the alternate names &mdash; the card may exist under a term you did not think of (<code>SVC syndrome</code> vs <code>superior vena cava</code>, <code>HFpEF</code> vs <code>preserved ejection fraction</code>, brand vs generic)</label></li>
+      <li><input type="checkbox" id="c1-3"><label for="c1-3"><b>Blueprint tag.</b> Browse the whole subtopic branch and read what is already there &mdash; <code>tag:#AK_ABIM::!Specialties::Infectious_Disease::05_Lower_respiratory_tract_infections::*</code></label></li>
+      <li><input type="checkbox" id="c1-4"><label for="c1-4"><b>Source QID.</b> Check whether this exact question has already been carded &mdash; <code>tag:#AK_ABIM::MKSAP::abxyz12345</code></label></li>
+      <li><input type="checkbox" id="c1-5"><label for="c1-5">Cross-check on the AnkiHub web deck browser &mdash; a suggestion may be pending that has not synced to your collection yet <span data-link="ankihubDeck" data-text="AnkiHub"></span></label></li>
+      <li><input type="checkbox" id="c1-6"><label for="c1-6">Check for an <b>open thread</b> on the same topic &mdash; do not duplicate a discussion in flight <span data-link="community" data-text="Community"></span></label></li>
+    </ul>
+    <div class="tablewrap" style="margin-top:1.2rem">
+      <table>
+        <thead><tr><th>Finding</th><th>Go to</th></tr></thead>
+        <tbody>
+          <tr><td>A card covers this fact</td><td><a href="#stage-2a">Stage 2A</a></td></tr>
+          <tr><td>A card covers the topic but not <em>this</em> fact</td><td><a href="#stage-2b">Stage 2B</a>, and link the sibling card in your thread</td></tr>
+          <tr><td>Nothing covers it</td><td><a href="#stage-2b">Stage 2B</a></td></tr>
+          <tr><td>A pending suggestion already covers it</td><td>Comment on that suggestion instead &mdash; stop here</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="stage" id="stage-2a">
+    <header>
+      <span class="tag">Stage 2A</span>
+      <h3>The card already exists</h3>
+      <p class="goal">Decide whether it needs changing, then either edit it or record the new source as corroboration.</p>
+    </header>
+
+    <h4 class="sub">2A.1 &mdash; Evaluate the card</h4>
+    <ul class="check">
+      <li><input type="checkbox" id="ca-1"><label for="ca-1">Does the card <b>test the same fact</b> the question is testing? If it tests a neighbouring fact, this is a new card &rarr; <a href="#stage-2b">Stage 2B</a></label></li>
+      <li><input type="checkbox" id="ca-2"><label for="ca-2">Is anything <b>factually outdated</b> &mdash; guideline change, superseded drug, changed cutoff, retired terminology?</label></li>
+      <li><input type="checkbox" id="ca-3"><label for="ca-3">Text still compliant: one declarative sentence or a colon stem with vertical clozes; under 10 seconds to read; condition name <b>not</b> clozed; <code>c1</code> the more specific fact, <code>c2</code> the supporting one; no trailing period</label></li>
+      <li><input type="checkbox" id="ca-4"><label for="ca-4">Extra still compliant: 2&ndash;4 telegraphic bullets; <code>&rarr;</code> cause-and-effect, <code>+</code> combinations, <code>/</code> alternatives; final bullet a board tip; nothing lifted from incorrect answer options</label></li>
+      <li><input type="checkbox" id="ca-5"><label for="ca-5">Is the card <b>redundant</b> with another in the same branch? If so the change may be a merge &mdash; escalate at Stage 3</label></li>
+    </ul>
+    <div class="note"><b>Decision point.</b> No change needed &rarr; skip to 2A.6. Change needed &rarr; 2A.2.</div>
+
+    <h4 class="sub">2A.2 &mdash; Draft the suggested change</h4>
+    <ul class="check">
+      <li><input type="checkbox" id="ca-6"><label for="ca-6">Change <b>only what the new source supports</b> &mdash; no outside knowledge, no drive-by rewrites of unrelated parts</label></li>
+      <li><input type="checkbox" id="ca-7"><label for="ca-7"><b>Preserve existing cloze numbering.</b> Renumbering <code>c1</code>/<code>c2</code> destroys review history for every subscriber &mdash; only renumber if the card is genuinely being restructured</label></li>
+      <li><input type="checkbox" id="ca-8"><label for="ca-8">Adding a new fact? Add it as <code>c3</code> rather than reshuffling the existing clozes</label></li>
+      <li><input type="checkbox" id="ca-9"><label for="ca-9">Write a one-line summary of <b>what changed and why</b> &mdash; you need it for the suggestion and the thread</label></li>
+    </ul>
+
+    <h4 class="sub">2A.3 &mdash; Tag</h4>
+    <ul class="check">
+      <li><input type="checkbox" id="ca-10"><label for="ca-10">Add the new source QID tag: <code>#AK_ABIM::MKSAP::abxyz12345</code> (or <code>::AMBOSS::</code> / <code>::UWORLD::</code>)</label></li>
+      <li><input type="checkbox" id="ca-11"><label for="ca-11"><b>Do not remove any existing tags</b> &mdash; a card can and should carry several source tags</label></li>
+      <li><input type="checkbox" id="ca-12"><label for="ca-12">Re-check the blueprint tag: is it still the most specific correct one for the <em>edited</em> content? <span data-link="tagsFile" data-text="ABIM tags"></span></label></li>
+      <li><input type="checkbox" id="ca-13"><label for="ca-13">If the edit moved the card's subject matter, add the better blueprint tag &mdash; and flag the old one for removal in your thread rather than silently stripping it</label></li>
+    </ul>
+
+    <h4 class="sub">2A.4 &mdash; Screenshot into the Missed Question field</h4>
+    <ul class="check">
+      <li><input type="checkbox" id="ca-14"><label for="ca-14">Screenshot the <b>relevant portion only</b> &mdash; the explanation sentence or table that justifies the change, not the whole page</label></li>
+      <li><input type="checkbox" id="ca-15"><label for="ca-15">Crop tightly; avoid capturing full question stems where the explanation alone makes the point</label></li>
+      <li><input type="checkbox" id="ca-16"><label for="ca-16">Paste into the <b>Missed Question</b> field &mdash; not Extra, not Text</label></li>
+      <li><input type="checkbox" id="ca-17"><label for="ca-17">Confirm it renders in the card preview and is legible at phone width</label></li>
+      <li><input type="checkbox" id="ca-18"><label for="ca-18">If the card already has a Missed Question image, <b>add</b> yours beneath it rather than replacing</label></li>
+    </ul>
+
+    <h4 class="sub">2A.5 &mdash; Submit the suggestion</h4>
+    <ul class="check">
+      <li><input type="checkbox" id="ca-19"><label for="ca-19">Use <b>Suggest a change</b> on the note in AnkiHub <span data-link="ankihubDeck" data-text="AnkiHub"></span></label></li>
+      <li><input type="checkbox" id="ca-20"><label for="ca-20">Rationale contains: <b>source + QID</b>, <b>what changed</b>, <b>why</b></label></li>
+      <li><input type="checkbox" id="ca-21"><label for="ca-21">Confirm the diff AnkiHub shows you is only the change you intended</label></li>
+      <li><input type="checkbox" id="ca-22"><label for="ca-22">Copy the suggestion link &mdash; you need it for Stage 3</label></li>
+    </ul>
+
+    <h4 class="sub">2A.6 &mdash; Card is already correct</h4>
+    <p style="color:var(--ink-2);font-size:.93rem;margin:0 0 .6rem">The card does not need editing, but the new question is still evidence that the fact is tested.</p>
+    <ul class="check">
+      <li><input type="checkbox" id="ca-23"><label for="ca-23">Add the new source QID tag</label></li>
+      <li><input type="checkbox" id="ca-24"><label for="ca-24">Add the screenshot to the Missed Question field</label></li>
+      <li><input type="checkbox" id="ca-25"><label for="ca-25">Submit as a tag/field-only suggestion, rationale: <em>&ldquo;corroborating source, no content change&rdquo;</em></label></li>
+    </ul>
+  </article>
+
+  <article class="stage" id="stage-2b">
+    <header>
+      <span class="tag">Stage 2B</span>
+      <h3>Nothing covers it yet</h3>
+      <p class="goal">Write a new card that tests exactly what the question tests &mdash; no more, no less.</p>
+    </header>
+
+    <h4 class="sub">2B.1 &mdash; Confirm the card is worth making</h4>
+    <ul class="check">
+      <li><input type="checkbox" id="cb-1"><label for="cb-1">The fact is <b>discrete, testable and high-yield</b> &mdash; not trivia, not a whole paragraph</label></li>
+      <li><input type="checkbox" id="cb-2"><label for="cb-2">Stage 1 searches came back clean</label></li>
+      <li><input type="checkbox" id="cb-3"><label for="cb-3"><b>Default to one card.</b> Only make 2&ndash;3 if the screenshot contains clearly distinct high-yield points that cannot fit in one card without overloading it</label></li>
+      <li><input type="checkbox" id="cb-4"><label for="cb-4">The fact comes <b>entirely from the screenshot</b> &mdash; no outside knowledge, no inferred content</label></li>
+    </ul>
+
+    <h4 class="sub">2B.2 &mdash; Write the card</h4>
+    <ul class="check">
+      <li><input type="checkbox" id="cb-5"><label for="cb-5"><b>Text:</b> one declarative sentence, or a colon-terminated stem followed by vertical cloze lines; precise formal terminology; readable in under 10 seconds</label></li>
+      <li><input type="checkbox" id="cb-6"><label for="cb-6">Cloze syntax exactly <code>{{c1::answer}}</code>; only the most forgettable, confusable or high-yield element is clozed</label></li>
+      <li><input type="checkbox" id="cb-7"><label for="cb-7">Disease or condition name is <b>not</b> clozed; background framing words are <b>not</b> clozed</label></li>
+      <li><input type="checkbox" id="cb-8"><label for="cb-8"><code>c1</code> = more specific or surprising; <code>c2</code> = supporting or secondary. Parenthetical clarifiers that are part of the answer sit <em>inside</em> the brackets</label></li>
+      <li><input type="checkbox" id="cb-9"><label for="cb-9">Two related answers &rarr; each on its own line under a colon stem, not merged into one sentence. No trailing period</label></li>
+      <li><input type="checkbox" id="cb-10"><label for="cb-10"><b>Extra:</b> 2&ndash;4 telegraphic bullets expanding outward &mdash; mechanism &rarr; findings &rarr; distinguishing features &rarr; exam tip. Last bullet is a board tip or comparison</label></li>
+      <li><input type="checkbox" id="cb-11"><label for="cb-11">Nothing from incorrect options and their explanations, unless the miss rate is significant enough to warrant a clarifier</label></li>
+      <li><input type="checkbox" id="cb-12"><label for="cb-12">Correct note type selected; fields populated: <b>Text</b>, <b>Extra</b>, <b>Missed Question</b></label></li>
+    </ul>
+
+    <h4 class="sub">2B.3 &mdash; Blueprint subject tag</h4>
+    <ul class="check">
+      <li><input type="checkbox" id="cb-13"><label for="cb-13">Find the matching tag in the blueprint list <span data-link="tagsFile" data-text="ABIM tags"></span></label></li>
+      <li><input type="checkbox" id="cb-14"><label for="cb-14">Use the <b>most specific level that genuinely fits</b> &mdash; the sub-subtopic, not the specialty</label></li>
+      <li><input type="checkbox" id="cb-15"><label for="cb-15">Copy the tag <b>verbatim</b> &mdash; underscores, capitalisation and the <code>NN_</code> numeric prefixes must match exactly</label></li>
+      <li><input type="checkbox" id="cb-16"><label for="cb-16">If the card legitimately spans two subtopics, apply both rather than picking a vaguer parent</label></li>
+    </ul>
+    <div class="note stopnote">
+      <b>If no existing tag fits &mdash; do not invent one silently.</b> Resist new tags; they are only warranted when a real blueprint topic has no home at all.
+      <ul class="check" style="margin-top:.6rem">
+        <li><input type="checkbox" id="cb-17"><label for="cb-17">Draft the proposed tag so it matches its siblings: <code>#AK_ABIM::!Specialties::&lt;Subject&gt;::NN_&lt;Topic&gt;::NN_&lt;Subtopic&gt;</code> with the next unused <code>NN</code></label></li>
+        <li><input type="checkbox" id="cb-18"><label for="cb-18">Tag the card with the <b>nearest existing parent</b> meanwhile so it is not orphaned</label></li>
+        <li><input type="checkbox" id="cb-19"><label for="cb-19">Take the proposal to the forum with <code>@abim-maintainers</code> &mdash; new tags need a vote before they are used <span data-link="community" data-text="Community"></span></label></li>
+        <li><input type="checkbox" id="cb-20"><label for="cb-20">State which existing tags you considered and why each one failed</label></li>
+      </ul>
+    </div>
+
+    <h4 class="sub">2B.4 &mdash; Source QID tag</h4>
+    <ul class="check">
+      <li><input type="checkbox" id="cb-21"><label for="cb-21">Add the tag for the source the card is based on: <code>#AK_ABIM::MKSAP::abxyz12345</code>, <code>#AK_ABIM::AMBOSS::&lt;qid&gt;</code>, <code>#AK_ABIM::UWORLD::&lt;qid&gt;</code></label></li>
+      <li><input type="checkbox" id="cb-22"><label for="cb-22">Copy the QID exactly as the source displays it &mdash; no added spaces, no altered case</label></li>
+      <li><input type="checkbox" id="cb-23"><label for="cb-23">If more than one source supports the card, add a tag for each</label></li>
+      <li><input type="checkbox" id="cb-24"><label for="cb-24">Sanity-check by searching the tag back after saving &mdash; it should return your card</label></li>
+    </ul>
+
+    <h4 class="sub">2B.5 &mdash; Screenshot into the Missed Question field</h4>
+    <ul class="check">
+      <li><input type="checkbox" id="cb-25"><label for="cb-25">Screenshot the relevant portion only &mdash; the sentence, table or figure the card is built from</label></li>
+      <li><input type="checkbox" id="cb-26"><label for="cb-26">Crop tightly, paste into the <b>Missed Question</b> field</label></li>
+      <li><input type="checkbox" id="cb-27"><label for="cb-27">Confirm it renders and is legible at phone width</label></li>
+    </ul>
+
+    <h4 class="sub">2B.6 &mdash; Submit the new note</h4>
+    <ul class="check">
+      <li><input type="checkbox" id="cb-28"><label for="cb-28">Submit as a <b>new note suggestion</b> in AnkiHub <span data-link="ankihubDeck" data-text="AnkiHub"></span></label></li>
+      <li><input type="checkbox" id="cb-29"><label for="cb-29">Rationale: source + QID, why this fact is high-yield, why no existing card covers it</label></li>
+      <li><input type="checkbox" id="cb-30"><label for="cb-30">Copy the suggestion link for Stage 3</label></li>
+    </ul>
+  </article>
+
+  <article class="stage" id="stage-3">
+    <header>
+      <span class="tag">Stage 3</span>
+      <h3>Discuss on AnkiHub Community</h3>
+      <p class="goal">Every suggestion gets a thread. The thread is where the vote happens.</p>
+    </header>
+    <ul class="check">
+      <li><input type="checkbox" id="c3-1"><label for="c3-1">Post in the <b>ABIM maintainer category</b> <span data-link="community" data-text="Community"></span></label></li>
+      <li><input type="checkbox" id="c3-2"><label for="c3-2">Title format: <code>[Subject] short description &mdash; new card / edit / new tag</code></label></li>
+      <li><input type="checkbox" id="c3-3"><label for="c3-3">Body includes the link to the AnkiHub suggestion</label></li>
+      <li><input type="checkbox" id="c3-4"><label for="c3-4">The proposed <b>Text</b> and <b>Extra</b>, pasted as text so people can quote and edit inline</label></li>
+      <li><input type="checkbox" id="c3-5"><label for="c3-5">The blueprint tag and the source QID tag</label></li>
+      <li><input type="checkbox" id="c3-6"><label for="c3-6">The screenshot</label></li>
+      <li><input type="checkbox" id="c3-7"><label for="c3-7">One line saying what you are asking for &mdash; approval, a tag decision, or help</label></li>
+      <li><input type="checkbox" id="c3-8"><label for="c3-8">Searched the forum first so you are not opening a duplicate thread</label></li>
+    </ul>
+    <div class="note">
+      <b>Tag <code>@abim-maintainers</code> when:</b> you are proposing a new tag &middot; sources conflict or the guideline is ambiguous &middot; the change is structural (merging, splitting, renumbering clozes, retiring a card) &middot; the card touches a contested or rapidly changing area &middot; you are unsure about anything at all. Nobody is penalised for asking.
+    </div>
+  </article>
+
+  <article class="stage" id="stage-4">
+    <header>
+      <span class="tag">Stage 4</span>
+      <h3>Vote and approval</h3>
+      <p class="goal">A change is approved when it has upvotes from 50% of maintainers, rounded down.</p>
+    </header>
+    <ul class="check">
+      <li><input type="checkbox" id="c4-1"><label for="c4-1">Confirm the <b>current active maintainer count</b></label></li>
+      <li><input type="checkbox" id="c4-2"><label for="c4-2">Compute the threshold: <code>votes needed = floor(maintainers &divide; 2)</code></label></li>
+      <li><input type="checkbox" id="c4-3"><label for="c4-3">Wait for the threshold to be reached in the thread</label></li>
+      <li><input type="checkbox" id="c4-4"><label for="c4-4">Address every objection raised before counting the vote as settled</label></li>
+    </ul>
+    <div class="quorum" id="quorum"></div>
+    <p style="font-size:.86rem;color:var(--ink-3);margin:.7rem 0 0">Odd numbers round down &mdash; 7 maintainers is 3 upvotes, not 4.</p>
+  </article>
+
+  <article class="stage alert" id="revise">
+    <header>
+      <span class="tag">If quorum is not reached</span>
+      <h3>Revise</h3>
+    </header>
+    <ul class="check">
+      <li><input type="checkbox" id="cr-1"><label for="cr-1">Revise the card using the feedback and repost in the same thread</label></li>
+      <li><input type="checkbox" id="cr-2"><label for="cr-2">If the objection is fundamental, withdraw the suggestion in AnkiHub and say so in the thread</label></li>
+      <li><input type="checkbox" id="cr-3"><label for="cr-3"><b>Do not merge on your own authority</b>, and do not re-submit an unchanged suggestion hoping for a different crowd</label></li>
+    </ul>
+  </article>
+
+  <article class="stage" id="stage-5">
+    <header>
+      <span class="tag">Stage 5</span>
+      <h3>Merge</h3>
+    </header>
+    <ul class="check">
+      <li><input type="checkbox" id="c5-1"><label for="c5-1">A maintainer with edit rights <b>accepts the suggestion</b> in AnkiHub</label></li>
+      <li><input type="checkbox" id="c5-2"><label for="c5-2">The accepting maintainer links the thread in the acceptance note</label></li>
+      <li><input type="checkbox" id="c5-3"><label for="c5-3"><b>Do not accept your own suggestion</b> &mdash; someone else merges it</label></li>
+    </ul>
+  </article>
+
+  <article class="stage" id="stage-6">
+    <header>
+      <span class="tag">Stage 6</span>
+      <h3>Verify and close out</h3>
+    </header>
+    <ul class="check">
+      <li><input type="checkbox" id="c6-1"><label for="c6-1">Sync your collection and pull the merged change</label></li>
+      <li><input type="checkbox" id="c6-2"><label for="c6-2">Every cloze renders as its own card and nothing is broken</label></li>
+      <li><input type="checkbox" id="c6-3"><label for="c6-3">The Missed Question screenshot displays</label></li>
+      <li><input type="checkbox" id="c6-4"><label for="c6-4">Blueprint tag and source QID tag are both present</label></li>
+      <li><input type="checkbox" id="c6-5"><label for="c6-5">Nothing else on the note changed unexpectedly</label></li>
+      <li><input type="checkbox" id="c6-6"><label for="c6-6">Search <code>tag:#AK_ABIM::MKSAP::abxyz12345</code> and confirm it returns the card</label></li>
+      <li><input type="checkbox" id="c6-7"><label for="c6-7">Mark the thread as <b>solved</b></label></li>
+      <li><input type="checkbox" id="c6-8"><label for="c6-8">If a new tag was approved, confirm it has been added to the blueprint tag list</label></li>
+    </ul>
+  </article>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="kicker">Reference</span>
+    <h2>Tags, searches and rejections</h2>
+  </div>
+
+  <article class="stage">
+    <header><span class="tag">Appendix A</span><h3>Tag reference</h3></header>
+    <p style="margin-top:0;color:var(--ink-2);font-size:.94rem">Blueprint tags all live under one root: <code>#AK_ABIM::!Specialties::&lt;Subject&gt;::NN_&lt;Topic&gt;::NN_&lt;Subtopic&gt;</code></p>
+    <pre class="mono" style="background:var(--surface-2);padding:.9rem 1rem;border-radius:6px;overflow-x:auto;font-size:.78rem;line-height:1.6;margin:0">#AK_ABIM::!Specialties::Infectious_Disease::05_Lower_respiratory_tract_infections::02_Pneumonia
+#AK_ABIM::!Specialties::Cardiovascular_Disease::15_Heart_failure::02_Heart_failure_with_reduced_ejection_fraction
+#AK_ABIM::!Specialties::Preventive_Medicine::01_Cancer_screening::04_Colorectal_cancer_screening
+#AK_ABIM::!Specialties::Medical_Oncology::07_Bone_tumors
+#AK_ABIM::MKSAP::abxyz12345</pre>
+    <p style="font-size:.88rem;color:var(--ink-3);margin:.8rem 0 0">Some branches stop at the topic level and have no subtopic &mdash; that is normal. Copy verbatim, never delete an existing tag, and use the deepest blueprint tag that fits.</p>
+  </article>
+
+  <article class="stage">
+    <header><span class="tag">Appendix B</span><h3>Anki browser search cheat sheet</h3></header>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Purpose</th><th>Search</th></tr></thead>
+        <tbody>
+          <tr><td>Everything in the deck</td><td><code>"deck:AnKing ABIM"</code></td></tr>
+          <tr><td>Keyword</td><td><code>"deck:AnKing ABIM" pneumonia</code></td></tr>
+          <tr><td>Exact phrase</td><td><code>"deck:AnKing ABIM" "fever and neutropenia"</code></td></tr>
+          <tr><td>One blueprint branch</td><td><code>tag:#AK_ABIM::!Specialties::Critical_Care::01_Shock::*</code></td></tr>
+          <tr><td>A whole specialty</td><td><code>tag:#AK_ABIM::!Specialties::Nephrology::*</code></td></tr>
+          <tr><td>A specific question</td><td><code>tag:#AK_ABIM::MKSAP::abxyz12345</code></td></tr>
+          <tr><td>All cards from one source</td><td><code>tag:#AK_ABIM::MKSAP::*</code></td></tr>
+          <tr><td>Cards with no source tag</td><td><code>-tag:#AK_ABIM::MKSAP::* -tag:#AK_ABIM::AMBOSS::* -tag:#AK_ABIM::UWORLD::*</code></td></tr>
+          <tr><td>Cards with no blueprint tag</td><td><code>-tag:#AK_ABIM::!Specialties::*</code></td></tr>
+          <tr><td>Empty Missed Question field</td><td><code>"Missed Question:"</code></td></tr>
+          <tr><td>Regex</td><td><code>re:hyper(kal|natr)emia</code></td></tr>
+          <tr><td>Recently added</td><td><code>added:7</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="stage alert">
+    <header><span class="tag">Appendix C</span><h3>Why suggestions get rejected</h3></header>
+    <ol style="margin:0;padding-left:1.2rem;color:var(--ink-2);font-size:.94rem;line-height:1.9">
+      <li>Duplicate &mdash; Stage 1 searches were skipped or too narrow</li>
+      <li>Missing source QID tag</li>
+      <li>Blueprint tag too vague, or a new tag invented without a vote</li>
+      <li>Content added from outside the screenshot</li>
+      <li>Condition name clozed away, so the stem gives no context</li>
+      <li>Clozes renumbered unnecessarily, destroying subscribers' review history</li>
+      <li>Extra bullets padded with material from incorrect answer options</li>
+      <li>Card overloaded &mdash; three facts crammed into one sentence instead of split</li>
+      <li>No Missed Question screenshot, or an uncropped full-page one</li>
+      <li>Merged or edited by the submitter without a vote</li>
+    </ol>
+  </article>
+
+  <article class="stage">
+    <header><span class="tag">Appendix D</span><h3>Still to be decided</h3>
+      <p class="goal">Not yet settled. Flagged so nobody assumes an answer.</p>
+    </header>
+    <ul class="check">
+      <li><input type="checkbox" id="cq-1"><label for="cq-1"><b>Minimum time a thread stays open</b> before the vote is counted &mdash; a 48&ndash;72&nbsp;h window is the usual convention, but the group has not adopted one</label></li>
+      <li><input type="checkbox" id="cq-2"><label for="cq-2"><b>Does the submitter's own vote count</b> toward the 50%?</label></li>
+      <li><input type="checkbox" id="cq-3"><label for="cq-3"><b>Who counts as an &ldquo;active&rdquo; maintainer</b> for the denominator &mdash; everyone with the role, or everyone active in the last N days?</label></li>
+      <li><input type="checkbox" id="cq-4"><label for="cq-4"><b>Fast path for typo fixes</b> &mdash; do trivial corrections still need a full vote?</label></li>
+      <li><input type="checkbox" id="cq-5"><label for="cq-5"><b>Reverts</b> &mdash; what happens when an approved change turns out to be wrong</label></li>
+    </ul>
+  </article>
+
+  <article class="stage" id="linkpanel" hidden>
+    <header><span class="tag">Setup</span><h3>Links still to set</h3>
+      <p class="goal">These appear as dashed placeholders in the checklists above. Send the URLs and they become live links.</p>
+    </header>
+    <ul id="linklist" style="margin:0;padding-left:1.2rem;color:var(--ink-2);font-size:.94rem;line-height:1.9"></ul>
+  </article>
+</section>
+
+<footer class="page">
+  Last updated 30 August 2026 &middot; Checkbox state is stored in your browser only and is never shared.
+</footer>
+
+</div>
+
+<script>
+// ---------------------------------------------------------------
+// LINK TARGETS — edit these to point at your own pages.
+// null means "not set yet"; it renders as a dashed placeholder
+// and is listed in the "Links still to set" panel at the bottom.
+// ---------------------------------------------------------------
+var LINKS = {
+  ankihubDeck: { url: "https://app.ankihub.net/", label: "AnkiHub deck browser" },
+  community:   { url: "https://community.ankihub.net/", label: "AnkiHub Community forum" },
+  tagsFile:    { url: null, label: "The ABIM blueprint tag list" },
+  styleGuide:  { url: null, label: "The card creation style guide" }
+};
+
+(function () {
+  "use strict";
+
+  // ---- render link chips ------------------------------------------------
+  var missing = {};
+  document.querySelectorAll("[data-link]").forEach(function (slot) {
+    var key = slot.getAttribute("data-link");
+    var text = slot.getAttribute("data-text") || key;
+    var entry = LINKS[key];
+    if (entry && entry.url) {
+      var a = document.createElement("a");
+      a.className = "chip";
+      a.href = entry.url;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.textContent = text + " ↗";
+      slot.replaceWith(a);
+    } else {
+      missing[key] = (entry && entry.label) || key;
+      var span = document.createElement("span");
+      span.className = "chip unset";
+      span.title = "Link not set yet";
+      span.textContent = text + " — link not set";
+      slot.replaceWith(span);
+    }
+  });
+  var keys = Object.keys(missing);
+  if (keys.length) {
+    var panel = document.getElementById("linkpanel");
+    var list = document.getElementById("linklist");
+    keys.forEach(function (k) {
+      var li = document.createElement("li");
+      li.textContent = missing[k];
+      var c = document.createElement("code");
+      c.textContent = "LINKS." + k;
+      li.appendChild(document.createTextNode(" — "));
+      li.appendChild(c);
+      list.appendChild(li);
+    });
+    panel.hidden = false;
+  }
+
+  // ---- quorum table -----------------------------------------------------
+  var q = document.getElementById("quorum");
+  for (var n = 4; n <= 12; n++) {
+    var d = document.createElement("div");
+    d.innerHTML = '<span class="m">' + n + " maintainers</span><span class=\"v\">" +
+      Math.floor(n / 2) + "</span>";
+    q.appendChild(d);
+  }
+
+  // ---- checkbox persistence --------------------------------------------
+  var KEY = "abim-workflow-v1";
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('ul.check input[type="checkbox"]'));
+  var progress = document.getElementById("progress");
+
+  function readState() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) { return {}; }
+  }
+  function writeState(state) {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* private mode */ }
+  }
+  function paintProgress() {
+    var done = boxes.filter(function (b) { return b.checked; }).length;
+    progress.textContent = done + " of " + boxes.length + " boxes ticked";
+  }
+
+  var state = readState();
+  boxes.forEach(function (b) {
+    if (state[b.id]) b.checked = true;
+    b.addEventListener("change", function () {
+      var s = readState();
+      if (b.checked) { s[b.id] = 1; } else { delete s[b.id]; }
+      writeState(s);
+      paintProgress();
+    });
+  });
+  paintProgress();
+
+  document.getElementById("resetAll").addEventListener("click", function () {
+    boxes.forEach(function (b) { b.checked = false; });
+    writeState({});
+    paintProgress();
+  });
+
+  // ---- flowchart connectors --------------------------------------------
+  var EDGES = [
+    ["start", "s0"], ["s0", "s1"], ["s1", "q1"],
+    ["q1", "a", "YES"], ["q1", "b", "NO"],
+    ["a", "s3"], ["b", "s3"],
+    ["s3", "s4"], ["s4", "q2"],
+    ["q2", "rev", "NO"], ["q2", "s5", "YES"],
+    ["s5", "s6"], ["s6", "done"],
+    ["rev", "s3", "", "loop"]
+  ];
+
+  var flow = document.getElementById("flow");
+  var svg = document.getElementById("wires");
+  var NS = "http://www.w3.org/2000/svg";
+
+  function el(name, attrs) {
+    var e = document.createElementNS(NS, name);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+  function rectOf(id, base) {
+    var node = flow.querySelector('[data-node="' + id + '"]');
+    if (!node) return null;
+    var r = node.getBoundingClientRect();
+    return {
+      l: r.left - base.left, r: r.right - base.left,
+      t: r.top - base.top, b: r.bottom - base.top,
+      cx: r.left + r.width / 2 - base.left,
+      cy: r.top + r.height / 2 - base.top
+    };
+  }
+
+  function draw() {
+    var base = flow.getBoundingClientRect();
+    svg.setAttribute("width", base.width);
+    svg.setAttribute("height", base.height);
+    svg.setAttribute("viewBox", "0 0 " + base.width + " " + base.height);
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+    var defs = el("defs");
+    var marker = el("marker", {
+      id: "arw", viewBox: "0 0 8 8", refX: "6.4", refY: "4",
+      markerWidth: "6", markerHeight: "6", orient: "auto-start-reverse"
+    });
+    marker.appendChild(el("path", { d: "M0,0.6 L7.4,4 L0,7.4 z", fill: "var(--wire)" }));
+    defs.appendChild(marker);
+    svg.appendChild(defs);
+
+    var R = 9; // corner radius
+
+    EDGES.forEach(function (e) {
+      var s = rectOf(e[0], base), t = rectOf(e[1], base);
+      if (!s || !t) return;
+      var d, lx, ly;
+
+      if (e[3] === "loop") {
+        var gx = Math.max(6, s.l - 26);
+        d = "M " + s.l + " " + s.cy +
+            " H " + (gx + R) +
+            " Q " + gx + " " + s.cy + " " + gx + " " + (s.cy - R) +
+            " V " + (t.cy + R) +
+            " Q " + gx + " " + t.cy + " " + (gx + R) + " " + t.cy +
+            " H " + t.l;
+        lx = gx + 30; ly = (s.cy + t.cy) / 2;
+      } else if (Math.abs(s.cx - t.cx) < 2) {
+        d = "M " + s.cx + " " + s.b + " V " + t.t;
+        lx = s.cx + 18; ly = (s.b + t.t) / 2 + 4;
+      } else {
+        var my = (s.b + t.t) / 2;
+        var dir = t.cx > s.cx ? 1 : -1;
+        d = "M " + s.cx + " " + s.b +
+            " V " + (my - R) +
+            " Q " + s.cx + " " + my + " " + (s.cx + R * dir) + " " + my +
+            " H " + (t.cx - R * dir) +
+            " Q " + t.cx + " " + my + " " + t.cx + " " + (my + R) +
+            " V " + t.t;
+        lx = t.cx - dir * 26; ly = my - 7;
+      }
+
+      svg.appendChild(el("path", {
+        d: d, fill: "none", stroke: "var(--wire)", "stroke-width": "1.6",
+        "stroke-linecap": "round", "marker-end": "url(#arw)"
+      }));
+
+      if (e[2]) {
+        var label = el("text", { x: lx, y: ly, class: "wire-label" });
+        label.textContent = e[2];
+        svg.appendChild(label);
+      }
+    });
+  }
+
+  draw();
+  window.addEventListener("resize", draw);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
+  setTimeout(draw, 300);
+})();
+</script>
+</body>
+</html>
